@@ -9,7 +9,6 @@ import {
 import { ConfigService } from '@nestjs/config';
 import * as Youch from 'youch';
 import { NegocioException } from 'src/exceptions/negocio-exception';
-import { GqlContextType } from '@nestjs/graphql';
 import * as _ from 'lodash';
 
 @Catch()
@@ -21,9 +20,6 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const request = ctx.getRequest();
     const response = ctx.getResponse();
 
-    const type = host.getType<GqlContextType>();
-    const isGraphql = type === 'graphql';
-
     const status =
       exception instanceof HttpException
         ? exception.getStatus()
@@ -34,17 +30,6 @@ export class HttpExceptionFilter implements ExceptionFilter {
     let messages = [];
     if (exception.status === 400) {
       messages = _.get(exception, 'response.message');
-    }
-
-    if (!isGraphql) {
-      if (node_env !== 'development') {
-        const youch = new Youch(exception, request);
-        const errorJson = await youch.toJSON();
-        if (messages && messages.length) {
-          errorJson.messages = messages;
-        }
-        return response.status(status).send(errorJson);
-      }
     }
 
     let errorMessage = exception.message;
@@ -65,15 +50,11 @@ export class HttpExceptionFilter implements ExceptionFilter {
     //   errorMessage = exception.message;
     // }
 
-    if (!isGraphql) {
-      return response.status(status).json({
-        error: {
-          message: errorMessage,
-          messages,
-        },
-      });
-    }
-
-    throw new Error(errorMessage);
+    return response.status(status).json({
+      error: {
+        message: errorMessage,
+        messages,
+      },
+    });
   }
 }

@@ -1,10 +1,10 @@
 FROM node:12
 
-COPY . /app
+# COPY . /app
 
 WORKDIR /app
 
 RUN npm i -g @nestjs/cli
-RUN npm i
+# RUN npm i
 
 CMD ["npm", "run", "start"]

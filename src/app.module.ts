@@ -3,10 +3,10 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { MulterModule } from '@nestjs/platform-express';
 import { APP_FILTER } from '@nestjs/core';
 import { HttpExceptionFilter } from './filter/http-exception.filter';
 import { UtilService } from './util/util.service';
+import { RepositorioModule } from './modules/repositorio/repositorio.module';
 
 @Module({
   imports: [
@@ -27,19 +27,13 @@ import { UtilService } from './util/util.service';
           uri: configService.get<string>('MONGODB_URI'),
           useNewUrlParser: true,
           useUnifiedTopology: true,
-          connectionName: 'repositorio',
+          connectionName: 'repos',
         };
       },
       inject: [ConfigService],
     }),
 
-    MulterModule.registerAsync({
-      imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        dest: configService.get<string>('UPLOAD_DIR'),
-      }),
-      inject: [ConfigService],
-    }),
+    RepositorioModule,
   ],
   controllers: [AppController],
   providers: [

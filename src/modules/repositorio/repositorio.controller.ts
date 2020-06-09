@@ -13,6 +13,7 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { RepositorioService } from './repositorio.service';
+import { NegocioException } from 'src/exceptions/negocio-exception';
 
 @Controller('repositorio')
 export class RepositorioController {
@@ -38,5 +39,14 @@ export class RepositorioController {
     res.header('Content-Type', file.contentType);
     res.header('Content-Disposition', 'attachment; filename=' + file.filename);
     return filestream.pipe(res);
+  }
+
+  @Get(':id')
+  async get(@Param('id') id: string) {
+    const file = await this.service.findInfo(id);
+    if (!file) {
+      throw new NegocioException('Arquivo não localizado!');
+    }
+    return file;
   }
 }

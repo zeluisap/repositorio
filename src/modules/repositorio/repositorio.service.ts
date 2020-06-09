@@ -25,6 +25,7 @@ export class RepositorioService {
       .then(result => result);
 
     return {
+      id: result._id,
       filename: result.filename,
       length: result.length,
       chunkSize: result.chunkSize,

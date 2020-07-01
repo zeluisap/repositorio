@@ -31,10 +31,19 @@ export class RepositorioService {
       chunkSize: result.chunkSize,
       md5: result.md5,
       contentType: result.contentType,
+      imagem: this.isImagem(result),
+      link_download: '/repositorio/download/' + result._id,
     };
   }
 
   async deleteFile(id: string): Promise<boolean> {
     return await this.fileModel.delete(id);
+  }
+
+  isImagem(arquivo) {
+    if (!(arquivo && arquivo.contentType)) {
+      return false;
+    }
+    return arquivo.contentType.toLowerCase().startsWith('image/');
   }
 }

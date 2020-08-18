@@ -10,6 +10,7 @@ import {
   Response,
   HttpException,
   HttpStatus,
+  Query,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { RepositorioService } from './repositorio.service';
@@ -21,9 +22,8 @@ export class RepositorioController {
 
   @UseInterceptors(FileInterceptor('arquivo'))
   @Post()
-  async upload(@UploadedFile() arquivo, @Body() dto) {
-    return arquivo;
-    // return await this.service.upload(arquivo, dto);
+  upload(@UploadedFile() arquivo, @Body() dto) {
+    return this.service.prepara(arquivo, dto);
   }
 
   @Get('download/:id')
@@ -39,6 +39,19 @@ export class RepositorioController {
     res.header('Content-Type', file.contentType);
     res.header('Content-Disposition', 'attachment; filename=' + file.filename);
     return filestream.pipe(res);
+  }
+
+  @Get('preview/:id')
+  async preview(@Param('id') id: string, @Query() params, @Res() res) {
+    const file = await this.service.geraPreview(id, params);
+    if (!file) {
+      throw new HttpException(
+        'An error occurred while retrieving file',
+        HttpStatus.EXPECTATION_FAILED,
+      );
+    }
+
+    return await this.downloadFile(file._id.toString(), res);
   }
 
   @Get(':id')

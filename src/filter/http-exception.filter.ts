@@ -32,7 +32,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
       messages = _.get(exception, 'response.message');
     }
 
-    let errorMessage = exception.message;
+    let errorMessage = exception.message || exception.error;
 
     if (node_env !== 'development') {
       errorMessage = 'Erro interno do servidor, avise o administrador!';

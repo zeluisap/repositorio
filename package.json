@@ -29,7 +29,7 @@
     "@types/mongoose-paginate": "^5.0.8",
     "@types/multer-gridfs-storage": "^4.0.1",
     "bcrypt": "^4.0.1",
-    "class-transformer": "^0.2.3",
+    "class-transformer": "^0.3.1",
     "class-validator": "^0.12.2",
     "connect-mongo": "^3.2.0",
     "filepreview-es6": "^1.0.8",
